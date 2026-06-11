@@ -49,6 +49,17 @@ const userSchema = new mongoose.Schema(
       type: Boolean,
       default: true,
     },
+    skillLevel: {
+      type: String,
+      enum: ['beginner', 'intermediate', 'advanced'],
+      default: 'beginner',
+    },
+    following: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+      },
+    ],
   },
   { timestamps: true }
 );

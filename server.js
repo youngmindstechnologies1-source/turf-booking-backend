@@ -19,6 +19,11 @@ const slotRoutes = require('./routes/slotRoutes');
 const bookingRoutes = require('./routes/bookingRoutes');
 const reviewRoutes = require('./routes/reviewRoutes');
 const adminRoutes = require('./routes/adminRoutes');
+const splitRoutes = require('./routes/splitRoutes');
+const userRoutes = require('./routes/userRoutes');
+const matchRoutes = require('./routes/matchRoutes');
+const notificationRoutes = require('./routes/notificationRoutes');
+const { startSplitLockCleanup } = require('./utils/splitLockCleanup');
 
 // Create uploads directory if it doesn't exist
 const uploadsDir = path.join(__dirname, 'uploads');
@@ -59,6 +64,10 @@ app.use('/api/slots', slotRoutes);
 app.use('/api/bookings', bookingRoutes);
 app.use('/api/reviews', reviewRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/split', splitRoutes);
+app.use('/api/users', userRoutes);
+app.use('/api/matches', matchRoutes);
+app.use('/api/notifications', notificationRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {
@@ -72,6 +81,7 @@ const PORT = process.env.PORT || 5000;
 
 const server = app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
+  startSplitLockCleanup();
 });
 
 // Handle unhandled promise rejections

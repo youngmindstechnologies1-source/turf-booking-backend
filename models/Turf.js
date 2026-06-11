@@ -36,7 +36,6 @@ const turfSchema = new mongoose.Schema(
       type: {
         type: String,
         enum: ['Point'],
-        default: 'Point',
       },
       coordinates: {
         type: [Number],
@@ -128,6 +127,14 @@ const turfSchema = new mongoose.Schema(
       type: Boolean,
       default: true,
     },
+    upiVpa: {
+      type: String,
+      trim: true,
+    },
+    upiDisplayName: {
+      type: String,
+      trim: true,
+    },
   },
   {
     timestamps: true,
@@ -149,6 +156,18 @@ turfSchema.virtual('reviews', {
   localField: '_id',
   foreignField: 'turf',
   justOne: false,
+});
+
+// Pre-validate hook to clean up/initialize location field
+turfSchema.pre('validate', function (next) {
+  if (this.location) {
+    if (!this.location.coordinates || !Array.isArray(this.location.coordinates) || this.location.coordinates.length === 0) {
+      this.location = undefined;
+    } else {
+      this.location.type = 'Point';
+    }
+  }
+  next();
 });
 
 // Generate slug from name before saving

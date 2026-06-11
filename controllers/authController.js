@@ -119,6 +119,7 @@ const updateProfile = async (req, res, next) => {
     if (req.body.name) fieldsToUpdate.name = req.body.name;
     if (req.body.phone !== undefined) fieldsToUpdate.phone = req.body.phone;
     if (req.body.avatar !== undefined) fieldsToUpdate.avatar = req.body.avatar;
+    if (req.body.skillLevel !== undefined) fieldsToUpdate.skillLevel = req.body.skillLevel;
 
     const user = await User.findByIdAndUpdate(req.user.id, fieldsToUpdate, {
       new: true,

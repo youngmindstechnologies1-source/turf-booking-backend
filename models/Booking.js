@@ -46,13 +46,47 @@ const bookingSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ['confirmed', 'completed', 'cancelled'],
+      enum: [
+        'confirmed',       // Cash booking — pay at venue
+        'pending_split',   // UPI split initiated, waiting for payments
+        'completed',       // Past booking
+        'cancelled',       // Cancelled
+        'fully_settled',   // All payments verified by owner
+      ],
       default: 'confirmed',
     },
     paymentMode: {
       type: String,
-      enum: ['online', 'venue'],
-      default: 'venue',
+      enum: ['cash', 'upi_split'],
+      default: 'cash',
+    },
+    // --- Split Payment Fields ---
+    playerCount: {
+      type: Number,
+      min: 1,
+      default: 1,
+    },
+    splitAmount: {
+      type: Number,
+      default: 0,
+    },
+    splitLockExpiresAt: {
+      type: Date,
+    },
+    cashOutstanding: {
+      type: Number,
+      default: 0,
+    },
+    onlineCollected: {
+      type: Number,
+      default: 0,
+    },
+    settledAt: {
+      type: Date,
+    },
+    settledBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
     },
     notes: {
       type: String,
@@ -69,6 +103,7 @@ bookingSchema.index({ bookingRef: 1 }, { unique: true });
 bookingSchema.index({ player: 1, status: 1 });
 bookingSchema.index({ turf: 1, date: 1 });
 bookingSchema.index({ createdAt: -1 });
+bookingSchema.index({ status: 1, splitLockExpiresAt: 1 });
 
 // Generate booking reference before saving
 bookingSchema.pre('save', function (next) {
