@@ -153,7 +153,7 @@ const getMyBookings = async (req, res, next) => {
   try {
     // Auto-mark past confirmed bookings as completed
     const now = new Date();
-    now.setHours(0, 0, 0, 0);
+    now.setUTCHours(0, 0, 0, 0);
 
     await Booking.updateMany(
       {
@@ -215,7 +215,7 @@ const getTurfBookings = async (req, res, next) => {
     // Optional date filter
     if (req.query.date) {
       const filterDate = new Date(req.query.date);
-      filterDate.setHours(0, 0, 0, 0);
+      filterDate.setUTCHours(0, 0, 0, 0);
       const nextDay = new Date(filterDate);
       nextDay.setDate(nextDay.getDate() + 1);
       filter.date = { $gte: filterDate, $lt: nextDay };
@@ -294,9 +294,9 @@ const cancelBooking = async (req, res, next) => {
 
     // Check if booking date is in the future
     const now = new Date();
-    now.setHours(0, 0, 0, 0);
+    now.setUTCHours(0, 0, 0, 0);
     const bookingDate = new Date(booking.date);
-    bookingDate.setHours(0, 0, 0, 0);
+    bookingDate.setUTCHours(0, 0, 0, 0);
 
     if (bookingDate <= now) {
       return next(new ErrorResponse('Cannot cancel a booking for today or past dates', 400));

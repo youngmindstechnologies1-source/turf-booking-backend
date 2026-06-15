@@ -28,7 +28,7 @@ const generateSlotsForDateRange = async (turf, startDate, endDate) => {
     currentDate.setDate(currentDate.getDate() + 1)
   ) {
     const dateOnly = new Date(currentDate);
-    dateOnly.setHours(0, 0, 0, 0);
+    dateOnly.setUTCHours(0, 0, 0, 0);
 
     for (
       let slotStart = openMinutes;

@@ -11,6 +11,7 @@ const cors = require('cors');
 const morgan = require('morgan');
 const connectDB = require('./config/db');
 const { errorHandler } = require('./middleware/errorHandler');
+const { S3Client, GetObjectCommand } = require('@aws-sdk/client-s3');
 
 // Route files
 const authRoutes = require('./routes/authRoutes');
@@ -36,8 +37,12 @@ connectDB();
 
 const app = express();
 
-// Security middleware
-app.use(helmet());
+// Security middleware — relax cross-origin policy so images load correctly
+app.use(
+  helmet({
+    crossOriginResourcePolicy: { policy: 'cross-origin' },
+  })
+);
 
 // CORS
 app.use(
@@ -54,8 +59,39 @@ app.use(morgan('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Serve static uploads
+// Serve static uploads (local dev fallback)
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+// S3 image proxy — serves private S3 objects through the server
+if (process.env.AWS_S3_BUCKET && process.env.AWS_REGION) {
+  const s3Client = new S3Client({
+    region: process.env.AWS_REGION,
+    credentials: {
+      accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+      secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+    },
+  });
+
+  app.get('/s3/:key(*)', async (req, res) => {
+    try {
+      const command = new GetObjectCommand({
+        Bucket: process.env.AWS_S3_BUCKET,
+        Key: req.params.key,
+      });
+      const response = await s3Client.send(command);
+
+      res.set('Content-Type', response.ContentType || 'image/jpeg');
+      res.set('Cache-Control', 'public, max-age=86400'); // Cache for 24h
+      res.set('Cross-Origin-Resource-Policy', 'cross-origin');
+      response.Body.pipe(res);
+    } catch (error) {
+      console.error('S3 proxy error:', error.message);
+      res.status(404).send('Image not found');
+    }
+  });
+
+  console.log('🖼️  S3 image proxy enabled at /s3/*');
+}
 
 // Mount routes
 app.use('/api/auth', authRoutes);

@@ -49,7 +49,7 @@ const getSlots = async (req, res, next) => {
     }
 
     const queryDate = new Date(date);
-    queryDate.setHours(0, 0, 0, 0);
+    queryDate.setUTCHours(0, 0, 0, 0);
 
     const nextDay = new Date(queryDate);
     nextDay.setDate(nextDay.getDate() + 1);
@@ -124,9 +124,9 @@ const blockSlots = async (req, res, next) => {
     }
 
     const start = new Date(startDate);
-    start.setHours(0, 0, 0, 0);
+    start.setUTCHours(0, 0, 0, 0);
     const end = new Date(endDate);
-    end.setHours(23, 59, 59, 999);
+    end.setUTCHours(23, 59, 59, 999);
 
     const result = await Slot.updateMany(
       {
@@ -171,9 +171,9 @@ const unblockSlots = async (req, res, next) => {
     }
 
     const start = new Date(startDate);
-    start.setHours(0, 0, 0, 0);
+    start.setUTCHours(0, 0, 0, 0);
     const end = new Date(endDate);
-    end.setHours(23, 59, 59, 999);
+    end.setUTCHours(23, 59, 59, 999);
 
     const result = await Slot.updateMany(
       {

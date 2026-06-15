@@ -184,9 +184,10 @@ const uploadPhotos = async (req, res, next) => {
       return next(new ErrorResponse('Please upload at least one photo', 400));
     }
 
-    // S3 uploads have file.location (full URL), local uploads have file.filename
+    // S3 uploads: use proxy path /s3/<key> (served by server.js proxy route)
+    // Local uploads: use /uploads/<filename>
     const filePaths = req.files.map((file) =>
-      file.location ? file.location : `/uploads/${file.filename}`
+      file.key ? `/s3/${file.key}` : `/uploads/${file.filename}`
     );
     turf.photos.push(...filePaths);
     await turf.save();
