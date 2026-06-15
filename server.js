@@ -71,7 +71,7 @@ app.use('/api/notifications', notificationRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {
-  res.status(200).json({ success: true, message: 'TurfBook API is running' });
+  res.status(200).json({ success: true, message: 'PitchPe API is running' });
 });
 
 // Global error handler

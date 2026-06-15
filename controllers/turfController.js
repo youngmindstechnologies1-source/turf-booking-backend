@@ -184,7 +184,10 @@ const uploadPhotos = async (req, res, next) => {
       return next(new ErrorResponse('Please upload at least one photo', 400));
     }
 
-    const filePaths = req.files.map((file) => `/uploads/${file.filename}`);
+    // S3 uploads have file.location (full URL), local uploads have file.filename
+    const filePaths = req.files.map((file) =>
+      file.location ? file.location : `/uploads/${file.filename}`
+    );
     turf.photos.push(...filePaths);
     await turf.save();
 
