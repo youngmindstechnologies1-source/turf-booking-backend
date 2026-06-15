@@ -52,7 +52,7 @@ const getSlots = async (req, res, next) => {
     queryDate.setUTCHours(0, 0, 0, 0);
 
     const nextDay = new Date(queryDate);
-    nextDay.setDate(nextDay.getDate() + 1);
+    nextDay.setUTCDate(nextDay.getUTCDate() + 1);
 
     const slots = await Slot.find({
       turf: turfId,

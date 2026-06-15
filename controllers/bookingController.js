@@ -217,7 +217,7 @@ const getTurfBookings = async (req, res, next) => {
       const filterDate = new Date(req.query.date);
       filterDate.setUTCHours(0, 0, 0, 0);
       const nextDay = new Date(filterDate);
-      nextDay.setDate(nextDay.getDate() + 1);
+      nextDay.setUTCDate(nextDay.getUTCDate() + 1);
       filter.date = { $gte: filterDate, $lt: nextDay };
     }
 

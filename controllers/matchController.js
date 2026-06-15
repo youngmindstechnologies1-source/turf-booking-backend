@@ -123,7 +123,7 @@ const getOpenMatches = async (req, res, next) => {
   try {
     let queryObj = {
       status: 'open',
-      date: { $gte: new Date().setHours(0, 0, 0, 0) },
+      date: { $gte: new Date().setUTCHours(0, 0, 0, 0) },
     };
 
     if (req.query.sport) {

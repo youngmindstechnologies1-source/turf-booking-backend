@@ -231,22 +231,21 @@ const getStats = async (req, res, next) => {
 
     // Start of this week (Monday)
     const startOfWeek = new Date(now);
-    const dayOfWeek = startOfWeek.getDay();
+    const dayOfWeek = startOfWeek.getUTCDay();
     const diff = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
-    startOfWeek.setDate(startOfWeek.getDate() - diff);
-    startOfWeek.setHours(0, 0, 0, 0);
+    startOfWeek.setUTCDate(startOfWeek.getUTCDate() - diff);
+    startOfWeek.setUTCHours(0, 0, 0, 0);
 
     // Start of last week
     const startOfLastWeek = new Date(startOfWeek);
-    startOfLastWeek.setDate(startOfLastWeek.getDate() - 7);
+    startOfLastWeek.setUTCDate(startOfLastWeek.getUTCDate() - 7);
 
     // End of last week
     const endOfLastWeek = new Date(startOfWeek);
-    endOfLastWeek.setMilliseconds(-1);
+    endOfLastWeek.setUTCMilliseconds(-1);
 
     // Start of this month
-    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-    startOfMonth.setHours(0, 0, 0, 0);
+    const startOfMonth = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1));
 
     const [
       totalUsers,
